@@ -1,4 +1,6 @@
-﻿namespace DigitalStudio.InvoiceManagement.WebApi.Services;
+﻿using DigitalStudio.InvoiceManagement.Domain.Models;
+
+namespace DigitalStudio.InvoiceManagement.WebApi.Services;
 
 public class AppDataContextHostedService: IHostedService
 {
@@ -15,7 +17,20 @@ public class AppDataContextHostedService: IHostedService
 
         var appDataContext = scope.ServiceProvider.GetRequiredService<AppDataContext>();
         var persistentStorageService = scope.ServiceProvider.GetRequiredService<PersistentStorageService>();
-        await appDataContext.Invoices.AddRangeAsync(await persistentStorageService.LoadAsync(cancellationToken), cancellationToken);
+
+        var entityCollections = (await persistentStorageService.LoadAsync(cancellationToken)).ToList();
+
+        await appDataContext.Invoices.AddRangeAsync(entityCollections
+            .First(e => e.GetType().GetGenericArguments().Contains(typeof(InvoiceDataModel)))
+            .Cast<InvoiceDataModel>(), cancellationToken);
+
+        await appDataContext.PaymentWays.AddRangeAsync(entityCollections
+            .First(e => e.GetType().GetGenericArguments().Contains(typeof(PaymentWayDataModel)))
+            .Cast<PaymentWayDataModel>(), cancellationToken);
+
+        await appDataContext.ProcessingStatuses.AddRangeAsync(entityCollections
+            .First(e => e.GetType().GetGenericArguments().Contains(typeof(ProcessingStatusDataModel)))
+            .Cast<ProcessingStatusDataModel>(), cancellationToken);
 
         await appDataContext.SaveChangesAsync(cancellationToken);
     }

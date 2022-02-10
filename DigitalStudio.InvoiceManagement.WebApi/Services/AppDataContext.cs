@@ -1,4 +1,4 @@
-﻿using DigitalStudio.InvoiceManagement.WebApi.Models;
+﻿using DigitalStudio.InvoiceManagement.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DigitalStudio.InvoiceManagement.WebApi.Services;
@@ -37,4 +37,8 @@ public class AppDataContext : DbContext
     }
 
     public DbSet<InvoiceDataModel> Invoices { get; set; }
+
+    public DbSet<PaymentWayDataModel> PaymentWays { get; set; }
+
+    public DbSet<ProcessingStatusDataModel> ProcessingStatuses { get; set; }
 }

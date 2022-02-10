@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
-using DigitalStudio.InvoiceManagement.WebApi.Models;
+using DigitalStudio.InvoiceManagement.Domain.Models;
+using DigitalStudio.InvoiceManagement.WebApi.Models.Paging;
+using DigitalStudio.InvoiceManagement.WebApi.Models.Views;
 using DigitalStudio.InvoiceManagement.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 using DescriptionAttribute = Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute;
 
 namespace DigitalStudio.InvoiceManagement.WebApi.Controllers;
@@ -23,20 +24,38 @@ public class InvoiceController : ControllerBase
         _appDataContext = appDataContext;
     }
 
-    [HttpGet("list")]
-    public async Task<IActionResult> GetListAsync()
+    [HttpGet]
+    public async Task<IActionResult> GetAsync(Guid id)
     {
-        var invoices = await _appDataContext.Invoices.ToListAsync();
+        var invoice = await _appDataContext
+            .Invoices.FirstOrDefaultAsync(i => i.Id == id);
+
+        return Ok(invoice);
+    }
+
+    [HttpGet("list")]
+    public async Task<IActionResult> GetListAsync([FromQuery] PageInfo pageInfo)
+    {
+        var invoices = await _appDataContext
+            .Invoices
+            .Skip(pageInfo.Size * (pageInfo.No - 1))
+            .Take(pageInfo.Size)
+            .ToListAsync();
 
         return Ok(invoices);
     }
 
-    [HttpPut("create")]
-    public async Task<IActionResult> PutAsync(InvoiceModel model)
+    [HttpPost]
+    public async Task<IActionResult> PostAsync([FromBody] InvoiceModel model)
     {
-        var invoiceEntity = await _appDataContext.Invoices.AddAsync(_mapper.Map<InvoiceDataModel>(model));
+        var editInvoice = _mapper.Map<InvoiceDataModel>(model);
+
+        var entityEntry = model.Id == null
+            ? await _appDataContext.Invoices.AddAsync(editInvoice)
+            : _appDataContext.Invoices.Update(editInvoice);
+
         await _appDataContext.SaveChangesAsync();
 
-        return Ok(invoiceEntity.Entity);
+        return Ok(entityEntry.Entity);
     }
 }

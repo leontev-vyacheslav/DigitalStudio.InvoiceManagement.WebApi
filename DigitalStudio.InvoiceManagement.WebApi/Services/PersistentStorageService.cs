@@ -1,14 +1,21 @@
 ﻿using System.Globalization;
 using System.Text;
-using DigitalStudio.InvoiceManagement.WebApi.Models;
+using DigitalStudio.InvoiceManagement.Domain.Models;
 
 namespace DigitalStudio.InvoiceManagement.WebApi.Services;
 
 public class PersistentStorageService
 {
-    public async Task<IEnumerable<InvoiceDataModel>> LoadAsync(CancellationToken cancellationToken = new CancellationToken())
+    private readonly string _storageRoot;
+
+    public PersistentStorageService(IWebHostEnvironment webHostEnvironment)
     {
-        var records = await File.ReadAllLinesAsync(@"c:\Temp\Invoices.csv", cancellationToken);
+        _storageRoot = $"{webHostEnvironment.WebRootPath}\\storage";
+    }
+
+    public async Task<IEnumerable<IEnumerable<object>>> LoadAsync(CancellationToken cancellationToken = new CancellationToken())
+    {
+        var records = await File.ReadAllLinesAsync($"{_storageRoot}\\Invoices.csv", cancellationToken);
 
         var invoices = records.Select(row =>
         {
@@ -16,16 +23,42 @@ public class PersistentStorageService
 
             return new InvoiceDataModel
             {
-                Id = Convert.ToInt32(rowData[0]),
+                Id = Guid.Parse(rowData[0]),
                 CreationDate = DateTime.Parse(rowData[1], CultureInfo.InvariantCulture),
                 ChangeDate = DateTime.Parse(rowData[2], CultureInfo.InvariantCulture),
-                ProcessingStatusId = Convert.ToInt32(rowData[3]),
-                PaymentWayId = Convert.ToInt32(rowData[4]),
-                Amount = Convert.ToDecimal(rowData[5])
+                ProcessingStatusId = int.Parse(rowData[3]),
+                PaymentWayId = int.Parse(rowData[4]),
+                Amount = decimal.Parse(rowData[5])
             };
         });
 
-        return invoices;
+        records = await File.ReadAllLinesAsync($"{_storageRoot}\\PaymentWays.csv", cancellationToken);
+
+        var paymentWays = records.Select(row =>
+        {
+            var rowData = row.Split(";");
+
+            return new PaymentWayDataModel
+            {
+                Id = int.Parse(rowData[0]),
+                Name = rowData[1]
+            };
+        });
+
+        records = await File.ReadAllLinesAsync($"{_storageRoot}\\ProcessingStatuses.csv", cancellationToken);
+
+        var processingStatuses = records.Select(row =>
+        {
+            var rowData = row.Split(";");
+
+            return new ProcessingStatusDataModel
+            {
+                Id = int.Parse(rowData[0]),
+                Name = rowData[1]
+            };
+        });
+
+        return new IEnumerable<object>[]{ invoices, paymentWays, processingStatuses};
     }
 
     public async Task SaveAsync(IEnumerable<InvoiceDataModel> invoices, CancellationToken cancellationToken = new CancellationToken())
@@ -36,7 +69,7 @@ public class PersistentStorageService
         {
             csv.AppendLine(string.Join(";", new []
             {
-                invoice.Id.ToString(),
+                invoice.Id.ToString("N"),
                 invoice.CreationDate.ToString(CultureInfo.InvariantCulture),
                 invoice.ChangeDate.ToString(CultureInfo.InvariantCulture),
                 invoice.ProcessingStatusId.ToString(),
@@ -45,6 +78,6 @@ public class PersistentStorageService
             }));
         });
 
-        await File.WriteAllTextAsync(@"c:\Temp\Invoices.csv", csv.ToString(), cancellationToken);
+        await File.WriteAllTextAsync($"{_storageRoot}\\Invoices.csv", csv.ToString(), cancellationToken);
     }
 }

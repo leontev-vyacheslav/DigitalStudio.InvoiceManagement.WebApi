@@ -1,8 +1,10 @@
-﻿namespace DigitalStudio.InvoiceManagement.WebApi.Models;
+﻿using DigitalStudio.InvoiceManagement.Domain.Contracts;
 
-public class InvoiceDataModel
+namespace DigitalStudio.InvoiceManagement.Domain.Models;
+
+public class InvoiceDataModel : IEntity<Guid>
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     public DateTime CreationDate { get; set; }
 
