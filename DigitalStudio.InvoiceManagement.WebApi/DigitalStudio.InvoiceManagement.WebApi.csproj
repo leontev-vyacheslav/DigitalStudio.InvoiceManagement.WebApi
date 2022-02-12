@@ -8,6 +8,7 @@
         <PackageId>DigitalStudio.InvoiceManagement.WebApi</PackageId>
         <AssemblyName>DigitalStudio.InvoiceManagement.WebApi</AssemblyName>
         <RootNamespace>DigitalStudio.InvoiceManagement.WebApi</RootNamespace>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,6 +28,18 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DigitalStudio.InvoiceManagement.Domain\DigitalStudio.InvoiceManagement.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="wwwroot\storage\Invoices.csv">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="wwwroot\storage\PaymentWays.csv">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="wwwroot\storage\ProcessingStatuses.csv">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

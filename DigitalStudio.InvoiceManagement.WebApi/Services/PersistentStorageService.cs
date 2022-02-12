@@ -10,12 +10,12 @@ public class PersistentStorageService
 
     public PersistentStorageService(IWebHostEnvironment webHostEnvironment)
     {
-        _storageRoot = $"{webHostEnvironment.WebRootPath}\\storage";
+        _storageRoot = $"{webHostEnvironment.WebRootPath}/storage";
     }
 
     public async Task<IEnumerable<IEnumerable<object>>> LoadAsync(CancellationToken cancellationToken = new CancellationToken())
     {
-        var records = await File.ReadAllLinesAsync($"{_storageRoot}\\Invoices.csv", cancellationToken);
+        var records = await File.ReadAllLinesAsync($"{_storageRoot}/Invoices.csv", cancellationToken);
 
         var invoices = records.Select(row =>
         {
@@ -32,7 +32,7 @@ public class PersistentStorageService
             };
         });
 
-        records = await File.ReadAllLinesAsync($"{_storageRoot}\\PaymentWays.csv", cancellationToken);
+        records = await File.ReadAllLinesAsync($"{_storageRoot}/PaymentWays.csv", cancellationToken);
 
         var paymentWays = records.Select(row =>
         {
@@ -45,7 +45,7 @@ public class PersistentStorageService
             };
         });
 
-        records = await File.ReadAllLinesAsync($"{_storageRoot}\\ProcessingStatuses.csv", cancellationToken);
+        records = await File.ReadAllLinesAsync($"{_storageRoot}/ProcessingStatuses.csv", cancellationToken);
 
         var processingStatuses = records.Select(row =>
         {
@@ -78,6 +78,6 @@ public class PersistentStorageService
             }));
         });
 
-        await File.WriteAllTextAsync($"{_storageRoot}\\Invoices.csv", csv.ToString(), cancellationToken);
+        await File.WriteAllTextAsync($"{_storageRoot}/Invoices.csv", csv.ToString(), cancellationToken);
     }
 }

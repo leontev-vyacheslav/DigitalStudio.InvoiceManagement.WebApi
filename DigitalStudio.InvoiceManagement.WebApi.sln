@@ -4,6 +4,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalStudio.InvoiceManage
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalStudio.InvoiceManagement.Domain", "DigitalStudio.InvoiceManagement.Domain\DigitalStudio.InvoiceManagement.Domain.csproj", "{0D1D42E7-0725-4DF6-BE8A-8E442CB59AE7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DigitalStudio.InvoiceManagement.Docker", "DigitalStudio.InvoiceManagement.Docker", "{4426F73C-1A51-453F-A11E-6932239A60BD}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Dockerfile = Dockerfile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
