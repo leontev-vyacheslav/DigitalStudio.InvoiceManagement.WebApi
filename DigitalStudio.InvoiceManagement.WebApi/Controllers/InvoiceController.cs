@@ -38,6 +38,8 @@ public class InvoiceController : ControllerBase
     {
         var invoices = await _appDataContext
             .Invoices
+            .Include(i=> i.PaymentWay)
+            .Include(i => i.ProcessingStatus)
             .Skip(pageInfo.Size * (pageInfo.No - 1))
             .Take(pageInfo.Size)
             .ToListAsync();
@@ -57,5 +59,21 @@ public class InvoiceController : ControllerBase
         await _appDataContext.SaveChangesAsync();
 
         return Ok(entityEntry.Entity);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteAsync(Guid id)
+    {
+        var deletingInvoice = await _appDataContext.FindAsync<InvoiceDataModel>(id);
+
+        if (deletingInvoice == null)
+        {
+            return BadRequest();
+        }
+
+        _appDataContext.Invoices.Remove(deletingInvoice);
+        await _appDataContext.SaveChangesAsync();
+
+        return Ok(deletingInvoice);
     }
 }
