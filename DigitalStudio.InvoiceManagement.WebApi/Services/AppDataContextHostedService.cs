@@ -2,7 +2,7 @@
 
 namespace DigitalStudio.InvoiceManagement.WebApi.Services;
 
-public class AppDataContextHostedService: IHostedService
+public sealed class AppDataContextHostedService: IHostedService
 {
     private readonly IServiceProvider _serviceProvider;
 

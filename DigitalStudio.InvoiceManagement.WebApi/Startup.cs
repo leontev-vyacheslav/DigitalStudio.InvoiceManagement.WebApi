@@ -27,6 +27,7 @@ public class Startup
             .AddAutoMapper(typeof(MapperProfile))
             .AddSingleton<PersistentStorageService>()
             .AddHostedService<AppDataContextHostedService>()
+            .AddAppCommands()
             .AddControllers()
             .AddNewtonsoftJson(options => { options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; });
 

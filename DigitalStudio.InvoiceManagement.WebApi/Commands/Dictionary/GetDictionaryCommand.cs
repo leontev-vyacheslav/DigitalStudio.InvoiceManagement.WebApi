@@ -1,25 +1,20 @@
 ﻿using DigitalStudio.InvoiceManagement.Domain.Contracts;
 using DigitalStudio.InvoiceManagement.Domain.Models;
 using DigitalStudio.InvoiceManagement.WebApi.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace DigitalStudio.InvoiceManagement.WebApi.Controllers;
+namespace DigitalStudio.InvoiceManagement.WebApi.Commands.Dictionary;
 
-[ApiController]
-[Route("/api/dictionaries")]
-[Produces("application/json")]
-public class DictionaryController : ControllerBase
+public sealed class GetDictionaryCommand
 {
     private readonly AppDataContext _appDataContext;
 
-    public DictionaryController(AppDataContext appDataContext)
+    public GetDictionaryCommand(AppDataContext appDataContext)
     {
         _appDataContext = appDataContext;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAsync(string name)
+    public async Task<IEnumerable<DictionaryBaseModel>> GetAsync(string name)
     {
         var dictionary = $"{name}DataModel" switch
         {
@@ -28,6 +23,6 @@ public class DictionaryController : ControllerBase
             _ => null as IEnumerable<DictionaryBaseModel>
         };
 
-        return Ok(dictionary);
+        return dictionary;
     }
 }

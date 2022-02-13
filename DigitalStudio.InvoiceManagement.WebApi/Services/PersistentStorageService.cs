@@ -4,7 +4,7 @@ using DigitalStudio.InvoiceManagement.Domain.Models;
 
 namespace DigitalStudio.InvoiceManagement.WebApi.Services;
 
-public class PersistentStorageService
+public sealed class PersistentStorageService
 {
     private readonly string _storageRoot;
 

@@ -1,10 +1,8 @@
-﻿using AutoMapper;
-using DigitalStudio.InvoiceManagement.Domain.Models;
+﻿using DigitalStudio.InvoiceManagement.WebApi.Commands.Invoice;
+using DigitalStudio.InvoiceManagement.WebApi.Immutables;
 using DigitalStudio.InvoiceManagement.WebApi.Models.Paging;
 using DigitalStudio.InvoiceManagement.WebApi.Models.Views;
-using DigitalStudio.InvoiceManagement.WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using DescriptionAttribute = Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute;
 
 namespace DigitalStudio.InvoiceManagement.WebApi.Controllers;
@@ -14,66 +12,39 @@ namespace DigitalStudio.InvoiceManagement.WebApi.Controllers;
 [Produces("application/json")]
 public class InvoiceController : ControllerBase
 {
-    private readonly IMapper _mapper;
-
-    private readonly AppDataContext _appDataContext;
-
-    public InvoiceController(IMapper mapper, AppDataContext appDataContext)
-    {
-        _mapper = mapper;
-        _appDataContext = appDataContext;
-    }
-
+    [Description(AttributeStrings.GetInvoice)]
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetAsync(Guid id)
+    public async Task<IActionResult> GetAsync([FromServices] GetInvoiceCommand command, Guid id)
     {
-        var invoice = await _appDataContext
-            .Invoices.FirstOrDefaultAsync(i => i.Id == id);
+        var invoice = await command.GetAsync(id);
 
         return Ok(invoice);
     }
 
+    [Description(AttributeStrings.GetInvoiceList)]
     [HttpGet("list")]
-    public async Task<IActionResult> GetListAsync([FromQuery] PageInfo pageInfo)
+    public async Task<IActionResult> GetListAsync([FromServices] GetInvoiceListCommand command, [FromQuery] PageInfo pageInfo)
     {
-        var invoices = await _appDataContext
-            .Invoices
-            .Include(i=> i.PaymentWay)
-            .Include(i => i.ProcessingStatus)
-            .Skip(pageInfo.Size * (pageInfo.No - 1))
-            .Take(pageInfo.Size)
-            .ToListAsync();
+        var invoices = await command.GetAsync(pageInfo);
 
         return Ok(invoices);
     }
 
+    [Description(AttributeStrings.PostInvoice)]
     [HttpPost]
-    public async Task<IActionResult> PostAsync([FromBody] InvoiceModel model)
+    public async Task<IActionResult> PostAsync([FromServices] PostInvoiceCommand command, [FromBody] InvoiceModel model)
     {
-        var editInvoice = _mapper.Map<InvoiceDataModel>(model);
+        var invoice = await command.PostAsync(model);
 
-        var entityEntry = model.Id == null
-            ? await _appDataContext.Invoices.AddAsync(editInvoice)
-            : _appDataContext.Invoices.Update(editInvoice);
-
-        await _appDataContext.SaveChangesAsync();
-
-        return Ok(entityEntry.Entity);
+        return Ok(invoice);
     }
 
+    [Description(AttributeStrings.DeleteInvoice)]
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteAsync(Guid id)
+    public async Task<IActionResult> DeleteAsync([FromServices] DeleteInvoiceCommand command, Guid id)
     {
-        var deletingInvoice = await _appDataContext.FindAsync<InvoiceDataModel>(id);
+        var deletingInvoice = await command.DeleteAsync(id);
 
-        if (deletingInvoice == null)
-        {
-            return BadRequest();
-        }
-
-        _appDataContext.Invoices.Remove(deletingInvoice);
-        await _appDataContext.SaveChangesAsync();
-
-        return Ok(deletingInvoice);
+        return deletingInvoice != null ? Ok(deletingInvoice) :  BadRequest();
     }
 }

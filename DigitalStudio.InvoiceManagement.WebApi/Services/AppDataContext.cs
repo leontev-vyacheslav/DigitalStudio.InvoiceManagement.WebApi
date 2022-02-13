@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalStudio.InvoiceManagement.WebApi.Services;
 
-public class AppDataContext : DbContext
+public sealed class AppDataContext : DbContext
 {
     private readonly PersistentStorageService _persistentStorageService;
 
