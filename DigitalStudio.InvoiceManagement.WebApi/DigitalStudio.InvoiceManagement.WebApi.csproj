@@ -9,6 +9,7 @@
         <AssemblyName>DigitalStudio.InvoiceManagement.WebApi</AssemblyName>
         <RootNamespace>DigitalStudio.InvoiceManagement.WebApi</RootNamespace>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <ApplicationIcon>wwwroot\content\images\favicon.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>

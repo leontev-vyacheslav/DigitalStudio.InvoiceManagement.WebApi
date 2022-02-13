@@ -24,7 +24,7 @@ public class InvoiceController : ControllerBase
         _appDataContext = appDataContext;
     }
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetAsync(Guid id)
     {
         var invoice = await _appDataContext
