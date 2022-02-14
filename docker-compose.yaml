@@ -1,0 +1,18 @@
+version: '3.7'
+services: 
+    apiservice:
+        container_name: dsim-web-api
+        build: 
+            context: ./DigitalStudio.InvoiceManagement.WebApi
+            dockerfile: Dockerfile
+        ports: 
+          - "7004:7004"
+    uiservice:
+        container_name: dsim-web-client
+        build: 
+            context: ./DigitalStudio.InvoiceManagement.WebClient
+            dockerfile: Dockerfile
+        ports: 
+          - "7006:80"
+        depends_on: 
+          - apiservice
