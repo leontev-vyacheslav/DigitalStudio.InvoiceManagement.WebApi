@@ -5,15 +5,12 @@ using DigitalStudio.InvoiceManagement.WebApi.Services;
 
 namespace DigitalStudio.InvoiceManagement.WebApi.Commands.Invoice;
 
-public sealed class PostInvoiceCommand
+public sealed class PostInvoiceCommand : DatabaseCommand
 {
-    private readonly AppDataContext _appDataContext;
-
     private readonly IMapper _mapper;
 
-    public PostInvoiceCommand(AppDataContext appDataContext, IMapper mapper)
+    public PostInvoiceCommand(AppDataContext appDataContext, IMapper mapper) : base(appDataContext)
     {
-        _appDataContext = appDataContext;
         _mapper = mapper;
     }
 
@@ -22,10 +19,10 @@ public sealed class PostInvoiceCommand
         var editInvoice = _mapper.Map<InvoiceDataModel>(model);
 
         var entityEntry = model.Id == null
-            ? await _appDataContext.Invoices.AddAsync(editInvoice)
-            : _appDataContext.Invoices.Update(editInvoice);
+            ? await AppDataContext.Invoices.AddAsync(editInvoice)
+            : AppDataContext.Invoices.Update(editInvoice);
 
-        await _appDataContext.SaveChangesAsync();
+        await AppDataContext.SaveChangesAsync();
 
         return entityEntry.Entity;
     }

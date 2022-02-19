@@ -1,5 +1,5 @@
-﻿using DigitalStudio.InvoiceManagement.WebApi.Commands.Dictionary;
-using DigitalStudio.InvoiceManagement.WebApi.Commands.Invoice;
+﻿using System.Reflection;
+using DigitalStudio.InvoiceManagement.WebApi.Commands;
 
 namespace DigitalStudio.InvoiceManagement.WebApi;
 
@@ -7,11 +7,16 @@ public static class Extensions
 {
     public static IServiceCollection AddAppCommands(this IServiceCollection services)
     {
-        return services
-            .AddTransient<GetInvoiceCommand>()
-            .AddTransient<GetInvoiceListCommand>()
-            .AddTransient<PostInvoiceCommand>()
-            .AddTransient<DeleteInvoiceCommand>()
-            .AddTransient<GetDictionaryCommand>();
+        Assembly
+            .GetExecutingAssembly()
+            .GetTypes()
+            .Where(t => !t.IsAbstract && typeof(DatabaseCommand).IsAssignableFrom(t))
+            .ToList()
+            .ForEach(t =>
+            {
+                services.AddTransient(t);
+            });
+
+        return services;
     }
 }

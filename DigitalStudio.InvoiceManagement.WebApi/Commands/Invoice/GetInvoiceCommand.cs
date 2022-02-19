@@ -4,18 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalStudio.InvoiceManagement.WebApi.Commands.Invoice;
 
-public sealed class GetInvoiceCommand
+public sealed class GetInvoiceCommand : DatabaseCommand
 {
-    private readonly AppDataContext _appDataContext;
-
-    public GetInvoiceCommand(AppDataContext appDataContext)
+    public GetInvoiceCommand(AppDataContext appDataContext) : base(appDataContext)
     {
-        _appDataContext = appDataContext;
     }
 
     public async Task<InvoiceDataModel> GetAsync(Guid id)
     {
-        return await _appDataContext
+        return await AppDataContext
             .Invoices.FirstOrDefaultAsync(i => i.Id == id);
     }
 }

@@ -3,23 +3,20 @@ using DigitalStudio.InvoiceManagement.WebApi.Services;
 
 namespace DigitalStudio.InvoiceManagement.WebApi.Commands.Invoice;
 
-public sealed class DeleteInvoiceCommand
+public sealed class DeleteInvoiceCommand : DatabaseCommand
 {
-    private readonly AppDataContext _appDataContext;
-
-    public DeleteInvoiceCommand(AppDataContext appDataContext)
+    public DeleteInvoiceCommand(AppDataContext appDataContext) : base(appDataContext)
     {
-        _appDataContext = appDataContext;
     }
 
     public async Task<InvoiceDataModel> DeleteAsync(Guid id)
     {
-        var deletingInvoice = await _appDataContext.FindAsync<InvoiceDataModel>(id);
+        var deletingInvoice = await AppDataContext.FindAsync<InvoiceDataModel>(id);
 
         if (deletingInvoice != null)
         {
-            _appDataContext.Invoices.Remove(deletingInvoice);
-            await _appDataContext.SaveChangesAsync();
+            AppDataContext.Invoices.Remove(deletingInvoice);
+            await AppDataContext.SaveChangesAsync();
         }
 
         return deletingInvoice;

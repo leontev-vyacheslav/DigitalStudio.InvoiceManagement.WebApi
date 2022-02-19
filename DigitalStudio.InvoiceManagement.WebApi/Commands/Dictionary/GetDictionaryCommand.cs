@@ -5,22 +5,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalStudio.InvoiceManagement.WebApi.Commands.Dictionary;
 
-public sealed class GetDictionaryCommand
+public sealed class GetDictionaryCommand : DatabaseCommand
 {
-    private readonly AppDataContext _appDataContext;
-
-    public GetDictionaryCommand(AppDataContext appDataContext)
+    public GetDictionaryCommand(AppDataContext appDataContext) : base(appDataContext)
     {
-        _appDataContext = appDataContext;
     }
 
-    public async Task<IEnumerable<DictionaryBaseModel>> GetAsync(string name)
+    public async Task<IEnumerable<DictionaryBaseDataModel>> GetAsync(string name)
     {
         var dictionary = $"{name}DataModel" switch
         {
-            nameof(PaymentWayDataModel) => await _appDataContext.PaymentWays.ToListAsync(),
-            nameof(ProcessingStatusDataModel) => await _appDataContext.ProcessingStatuses.ToListAsync(),
-            _ => null as IEnumerable<DictionaryBaseModel>
+            nameof(PaymentWayDataModel) => await AppDataContext.PaymentWays.ToListAsync(),
+            nameof(ProcessingStatusDataModel) => await AppDataContext.ProcessingStatuses.ToListAsync(),
+            _ => null as IEnumerable<DictionaryBaseDataModel>
         };
 
         return dictionary;
