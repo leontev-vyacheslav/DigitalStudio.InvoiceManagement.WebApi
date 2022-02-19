@@ -1,6 +1,6 @@
 ﻿namespace DigitalStudio.InvoiceManagement.Domain.Contracts;
 
-public abstract class DictionaryBaseModel : IEntity<int>
+public abstract class DictionaryBaseDataModel : IEntity<int>
 {
     public int Id { get; set; }
 

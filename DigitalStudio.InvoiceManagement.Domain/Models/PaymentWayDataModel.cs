@@ -3,7 +3,7 @@ using DigitalStudio.InvoiceManagement.Domain.Contracts;
 
 namespace DigitalStudio.InvoiceManagement.Domain.Models;
 
-public class PaymentWayDataModel : DictionaryBaseModel
+public class PaymentWayDataModel : DictionaryBaseDataModel
 {
     [NotMapped]
     [InverseProperty("PaymentWay")]
