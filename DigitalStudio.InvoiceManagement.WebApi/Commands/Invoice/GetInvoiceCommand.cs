@@ -10,9 +10,8 @@ public sealed class GetInvoiceCommand : DatabaseCommand
     {
     }
 
-    public async Task<InvoiceDataModel> GetAsync(Guid id)
+    public async Task<InvoiceDataModel?> GetAsync(Guid id)
     {
-        return await AppDataContext
-            .Invoices.FirstOrDefaultAsync(i => i.Id == id);
+        return await AppDataContext.Invoices.FirstOrDefaultAsync(i => i.Id == id);
     }
 }

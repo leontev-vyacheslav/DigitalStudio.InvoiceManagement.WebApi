@@ -11,7 +11,7 @@ public sealed class GetDictionaryCommand : DatabaseCommand
     {
     }
 
-    public async Task<IEnumerable<DictionaryBaseDataModel>> GetAsync(string name)
+    public async Task<IEnumerable<DictionaryBaseDataModel>?> GetAsync(string name)
     {
         var dictionary = $"{name}DataModel" switch
         {

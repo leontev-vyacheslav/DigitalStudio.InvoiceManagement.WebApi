@@ -9,7 +9,7 @@ public sealed class DeleteInvoiceCommand : DatabaseCommand
     {
     }
 
-    public async Task<InvoiceDataModel> DeleteAsync(Guid id)
+    public async Task<InvoiceDataModel?> DeleteAsync(Guid id)
     {
         var deletingInvoice = await AppDataContext.FindAsync<InvoiceDataModel>(id);
 
